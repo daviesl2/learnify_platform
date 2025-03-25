@@ -1,0 +1,71 @@
+// XR Models for Extended Reality Features
+
+model XRModel {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  modelUrl    String
+  thumbnailUrl String?
+  category    String
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  fieldTrips  VirtualFieldTrip[]
+}
+
+model VirtualFieldTrip {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  panoramaUrl String
+  hotspots    Json?    // Array of hotspots with coordinates and descriptions
+  modelId     String?
+  model       XRModel? @relation(fields: [modelId], references: [id])
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userProgress UserFieldTripProgress[]
+}
+
+model UserFieldTripProgress {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  fieldTripId   String
+  fieldTrip     VirtualFieldTrip @relation(fields: [fieldTripId], references: [id])
+  completed     Boolean        @default(false)
+  hotspotsVisited Json?        // Array of visited hotspot IDs
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, fieldTripId])
+}
+
+model ARWorksheet {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  worksheetUrl String
+  markerImage String?  // Image used for AR recognition
+  contentUrl  String   // 3D model or content shown when scanned
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userScans   UserWorksheetScan[]
+}
+
+model UserWorksheetScan {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  worksheetId String
+  worksheet   ARWorksheet @relation(fields: [worksheetId], references: [id])
+  scannedAt   DateTime    @default(now())
+  completed   Boolean     @default(false)
+
+  @@unique([userId, worksheetId])
+}
+

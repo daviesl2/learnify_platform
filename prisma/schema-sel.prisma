@@ -1,0 +1,61 @@
+// Social-Emotional Learning Models
+
+model MoodEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  mood        String   // e.g., "happy", "sad", "anxious", "calm"
+  intensity   Int      // 1-5 scale
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MindfulnessPrompt {
+  id          String   @id @default(cuid())
+  content     String
+  category    String   // e.g., "breathing", "gratitude", "awareness"
+  ageGroup    String   // e.g., "5-7", "8-11", "12-14"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userPrompts UserMindfulnessPrompt[]
+}
+
+model UserMindfulnessPrompt {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id])
+  promptId    String
+  prompt      MindfulnessPrompt @relation(fields: [promptId], references: [id])
+  completed   Boolean          @default(false)
+  response    String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([userId, promptId, createdAt])
+}
+
+model GrowthMindsetAffirmation {
+  id          String   @id @default(cuid())
+  content     String
+  category    String   // e.g., "perseverance", "challenge", "effort"
+  ageGroup    String   // e.g., "5-7", "8-11", "12-14"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userAffirmations UserGrowthMindsetAffirmation[]
+}
+
+model UserGrowthMindsetAffirmation {
+  id            String                 @id @default(cuid())
+  userId        String
+  user          User                   @relation(fields: [userId], references: [id])
+  affirmationId String
+  affirmation   GrowthMindsetAffirmation @relation(fields: [affirmationId], references: [id])
+  seen          Boolean                @default(false)
+  acknowledged  Boolean                @default(false)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  @@unique([userId, affirmationId, createdAt])
+}
+

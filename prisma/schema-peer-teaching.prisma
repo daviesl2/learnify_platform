@@ -1,0 +1,53 @@
+// Peer Teaching Models
+
+model PeerTeachingAssignment {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  conceptId       String
+  concept         Concept  @relation(fields: [conceptId], references: [id])
+  createdById     String
+  createdBy       User     @relation("CreatedAssignments", fields: [createdById], references: [id])
+  status          String   // "pending", "active", "completed"
+  dueDate         DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  peerTeachings   PeerTeaching[]
+}
+
+model PeerTeaching {
+  id              String   @id @default(cuid())
+  assignmentId    String
+  assignment      PeerTeachingAssignment @relation(fields: [assignmentId], references: [id])
+  teacherId       String
+  teacher         User     @relation("TeacherRole", fields: [teacherId], references: [id])
+  studentId       String
+  student         User     @relation("StudentRole", fields: [studentId], references: [id])
+  status          String   // "pending", "in-progress", "completed", "cancelled"
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  teacherNotes    String?
+  studentFeedback String?
+  studentRating   Int?     // 1-5 rating
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model MentorshipRelationship {
+  id              String   @id @default(cuid())
+  mentorId        String
+  mentor          User     @relation("MentorRole", fields: [mentorId], references: [id])
+  menteeId        String
+  mentee          User     @relation("MenteeRole", fields: [menteeId], references: [id])
+  status          String   // "pending", "active", "completed", "declined"
+  subjectId       String?
+  subject         Subject? @relation(fields: [subjectId], references: [id])
+  startDate       DateTime?
+  endDate         DateTime?
+  goals           String?
+  mentorNotes     String?
+  menteeFeedback  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
