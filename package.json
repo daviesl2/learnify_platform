@@ -52,7 +52,7 @@
     "date-fns": "latest",
     "embla-carousel-react": "8.5.1",
     "expo": "latest",
-    "expo-asset": "latest",
+    "expo-asset": "11.1.0",
     "expo-file-system": "latest",
     "expo-gl": "latest",
     "input-otp": "1.4.1",
